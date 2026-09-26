@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+*.tgz
+.DS_Store
+.vite/
+.env
+.env.*
+!.env.example
+# Local Claude Code settings
+.claude/

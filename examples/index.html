@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cesium-sgp4-viewer examples</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font:
+          15px/1.5 system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        background: #0b1220;
+        color: #e2e8f0;
+      }
+      main {
+        max-width: 640px;
+        margin: 12vh auto;
+        padding: 0 24px;
+      }
+      a {
+        color: #bef264;
+      }
+      li {
+        margin: 8px 0;
+      }
+      .muted {
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>cesium-sgp4-viewer</h1>
+      <p>
+        Thousands of satellites propagated with SGP4 in web workers and drawn on a CesiumJS globe.
+        Both examples load the same catalog and offer the same controls.
+      </p>
+      <ul>
+        <li><a href="vanilla/">Vanilla TypeScript example</a></li>
+        <li><a href="react/">React example</a></li>
+        <li>
+          <a href="https://github.com/dsanchez31/cesium-sgp4-viewer"
+            >Source code and documentation</a
+          >
+        </li>
+      </ul>
+      <p class="muted">TLE data: <a href="https://celestrak.org">CelesTrak</a>.</p>
+    </main>
+  </body>
+</html>

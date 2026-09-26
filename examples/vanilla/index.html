@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cesium-sgp4-viewer: vanilla example</title>
+  </head>
+  <body>
+    <div id="globe"></div>
+
+    <header class="panel toolbar">
+      <input
+        id="search"
+        type="search"
+        placeholder="Name or NORAD ID"
+        aria-label="Search satellites"
+      />
+      <fieldset id="regimes" class="regimes" aria-label="Orbit regimes"></fieldset>
+      <div class="group" role="group" aria-label="Projection">
+        <button id="mode-3d" type="button" aria-pressed="true">3D</button>
+        <button id="mode-2d" type="button" aria-pressed="false">2D</button>
+      </div>
+      <button id="orbits" type="button" aria-pressed="false">Orbits</button>
+      <button id="lighting" type="button" aria-pressed="false">Lighting</button>
+      <label class="select">
+        Labels
+        <select id="labels">
+          <option value="none">None</option>
+          <option value="hover" selected>Hover</option>
+          <option value="all">All</option>
+        </select>
+      </label>
+      <label class="file">
+        Load TLEs…
+        <input id="file" type="file" accept=".txt,.tle,.3le,text/plain" />
+      </label>
+      <output id="stats" class="stats">Loading…</output>
+    </header>
+
+    <aside id="details" class="panel details" hidden></aside>
+
+    <footer class="panel transport">
+      <div class="controls">
+        <button id="reverse" type="button" aria-pressed="false" title="Reverse">◀◀</button>
+        <button id="play" type="button" title="Play / pause">❚❚</button>
+        <div id="speeds" class="group" role="group" aria-label="Speed"></div>
+        <button id="live" type="button" aria-pressed="true">Live</button>
+        <output id="clock" class="clock"></output>
+      </div>
+      <div id="timeline" class="timeline"></div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

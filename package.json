@@ -1,0 +1,85 @@
+{
+  "name": "@dsanchez31/cesium-sgp4-viewer",
+  "version": "0.1.0",
+  "description": "Plot tens of thousands of satellites and their orbits on a CesiumJS globe, propagated with SGP4 from TLEs in web workers, orbits drawn by custom vertex and fragment shaders.",
+  "keywords": [
+    "cesium",
+    "cesiumjs",
+    "sgp4",
+    "tle",
+    "satellite",
+    "orbit",
+    "propagation",
+    "space-situational-awareness",
+    "ssa",
+    "webgl"
+  ],
+  "license": "Apache-2.0",
+  "author": "dsanchez31",
+  "homepage": "https://github.com/dsanchez31/cesium-sgp4-viewer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsanchez31/cesium-sgp4-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dsanchez31/cesium-sgp4-viewer/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "jsdelivr": "./dist/cesium-sgp4-viewer.iife.js",
+  "unpkg": "./dist/cesium-sgp4-viewer.iife.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && vite build --mode iife && tsc -p tsconfig.build.json",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p examples/shared && pnpm --filter \"./examples/*\" typecheck",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "check:package": "publint --strict && attw --pack . --profile esm-only",
+    "examples:dev": "pnpm --filter example-vanilla dev",
+    "examples:build": "pnpm --filter \"./examples/*\" build"
+  },
+  "peerDependencies": {
+    "cesium": ">=1.140.0 <2.0.0"
+  },
+  "dependencies": {
+    "satellite.js": "~6.0.2"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.3",
+    "@vitest/coverage-v8": "^5.0.2",
+    "cesium": "1.145.0",
+    "eslint": "^10.11.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.9",
+    "publint": "^0.3.24",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@12.6.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

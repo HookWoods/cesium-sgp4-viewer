@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - /
+      - /examples/*
+    schedule:
+      interval: weekly
+    ignore:
+      # Held on 6.x: the 7.x root entry pulls in a WASM build with top-level
+      # await that breaks bundling (see src/sgp4/propagate.ts). Lift this once
+      # upstream offers an entry without WASM.
+      - dependency-name: satellite.js
+        update-types: [version-update:semver-major]
+    groups:
+      # Cesium and the Cesium renderer internals the orbits use move together:
+      # its upgrades get their own pull request, to be checked on their own.
+      cesium:
+        patterns: [cesium]
+      development:
+        dependency-type: development
+      production:
+        dependency-type: production
+        exclude-patterns: [cesium]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
