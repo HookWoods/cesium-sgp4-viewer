@@ -89,20 +89,27 @@ export class ShardSampler {
   private resample(track: Track, startMs: number, stopMs: number): void {
     const { first, last } = gridRange(startMs, stopMs, track.stepMs);
     const count = last - first + 1;
-    if (track.samples && first === track.first && count === track.count) return;
-
     const previous = track.samples;
-    const previousFirst = track.first;
-    const previousEnd = previousFirst + track.count;
-    const samples = new Float32Array(count * 3);
-    let valid = 0;
+    if (previous && first === track.first && count === track.count) return;
 
+    // A window of the same width moves in place: the overlap slides in one copy,
+    // and only the new stretch is propagated.
+    const samples = previous?.length === count * 3 ? previous : new Float32Array(count * 3);
+    const keepFrom = Math.max(first, track.first);
+    const keepTo = previous ? Math.min(last + 1, track.first + track.count) : keepFrom;
+    if (previous && keepFrom < keepTo) {
+      const from = (keepFrom - track.first) * 3;
+      const to = (keepTo - track.first) * 3;
+      const target = (keepFrom - first) * 3;
+      if (samples === previous) samples.copyWithin(target, from, to);
+      else samples.set(previous.subarray(from, to), target);
+    }
+
+    let valid = 0;
     for (let n = 0; n < count; n++) {
       const k = first + n;
       const o = n * 3;
-      if (previous && k >= previousFirst && k < previousEnd) {
-        samples.set(previous.subarray((k - previousFirst) * 3, (k - previousFirst) * 3 + 3), o);
-      } else {
+      if (k < keepFrom || k >= keepTo) {
         const ms = k * track.stepMs;
         const teme = propagateTeme(track.satrec, ms, scratch);
         if (teme) {
