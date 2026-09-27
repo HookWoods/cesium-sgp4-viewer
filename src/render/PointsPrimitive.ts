@@ -66,6 +66,8 @@ const toUniform = (scalar: NearFarScalar | undefined): Cartesian4 =>
 export class PointsPrimitive {
   /** Written by the caller with `writePoint` and `hidePoint`, uploaded after {@link markDirty}. */
   readonly vertices: Float32Array;
+  /** During a morph, 1 keeps the points' heights, 0 lays them on the map. */
+  morphHeight = 1;
 
   private readonly internals: CesiumInternals | null;
   private readonly colors: readonly Color[];
@@ -91,6 +93,7 @@ export class PointsPrimitive {
       u_pixelSize: () => style.pixelSize,
       u_scaleByDistance: () => scale,
       u_translucencyByDistance: () => translucency,
+      u_morphHeight: () => this.morphHeight,
     };
   }
 

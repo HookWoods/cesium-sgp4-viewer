@@ -8,6 +8,7 @@ import {
   LabelStyle,
   type NearFarScalar,
   type Scene,
+  SceneMode,
   VerticalOrigin,
 } from 'cesium';
 
@@ -64,6 +65,7 @@ export class PointLayer {
   private readonly positions: Float64Array;
   /** 1 where the point is drawn. */
   private readonly drawn: Uint8Array;
+  private readonly removeMorphStart: () => void;
   private visible: Uint8Array | null = null;
   private lastMs = Number.NaN;
 
@@ -90,6 +92,14 @@ export class PointLayer {
     ) as PointsPrimitive;
     this.positions = new Float64Array(satellites.length * 3);
     this.drawn = new Uint8Array(satellites.length);
+    // A morph to or from 2D ends, or starts, on a flat map. Points kept at
+    // their height on the way would swell in perspective, high orbits most,
+    // then jump back onto the map when the morph completes.
+    this.removeMorphStart = scene.morphStart.addEventListener(
+      (_: unknown, from: SceneMode, to: SceneMode) => {
+        this.primitive.morphHeight = from === SceneMode.SCENE2D || to === SceneMode.SCENE2D ? 0 : 1;
+      },
+    );
   }
 
   /** Which catalog indices to draw (non-zero), or all of them with `null`. */
@@ -187,6 +197,7 @@ export class PointLayer {
   }
 
   destroy(): void {
+    this.removeMorphStart();
     this.disposeLabels();
     this.scene.primitives.remove(this.primitive);
   }

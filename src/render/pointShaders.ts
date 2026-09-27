@@ -49,7 +49,7 @@ export const POINT_ATTRIBUTE_LOCATIONS = {
  * projected the way Cesium's `GeographicProjection` does, height dropped on the
  * map, into Cesium's `(height, easting, northing)` world coordinates. During a
  * morph it moves between that projection and 3D with `czm_morphTime`, as
- * Cesium's own primitives do.
+ * Cesium's own primitives do, with its height scaled by `u_morphHeight`.
  *
  * Size and opacity follow the camera distance like `PointPrimitive`'s
  * `scaleByDistance` and `translucencyByDistance`, with 3 pixels of padding for
@@ -65,6 +65,7 @@ in vec4 pickColor;
 uniform float u_pixelSize;
 uniform vec4 u_scaleByDistance;
 uniform vec4 u_translucencyByDistance;
+uniform float u_morphHeight;
 
 out vec4 v_color;
 out vec4 v_pickColor;
@@ -81,7 +82,9 @@ void main() {
   } else {
     vec3 position = positionHigh + positionLow;
     vec3 g = geodetic(position);
-    float height = czm_sceneMode == czm_sceneMode2D ? 0.0 : g.z;
+    float height = g.z;
+    if (czm_sceneMode == czm_sceneMode2D) height = 0.0;
+    if (czm_sceneMode == czm_sceneModeMorphing) height *= u_morphHeight;
     vec4 projected = vec4(height, g.x * WGS84_A, g.y * WGS84_A, 1.0);
     if (czm_sceneMode == czm_sceneModeMorphing) {
       projected = czm_columbusViewMorph(projected, vec4(position, 1.0), czm_morphTime);
