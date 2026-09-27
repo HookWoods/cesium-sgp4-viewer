@@ -47,6 +47,7 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p examples/shared && pnpm --filter \"./examples/*\" typecheck",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "bench": "vitest bench --run --reporter=verbose",
     "check:package": "publint --strict && attw --pack . --profile esm-only",
     "examples:dev": "pnpm --filter example-vanilla dev",
     "examples:build": "pnpm --filter \"./examples/*\" build"
