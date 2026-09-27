@@ -26,8 +26,7 @@ export class TrackStore {
   }
 
   update(results: readonly ShardResult[]): void {
-    // The rings go to the GPU: keeping them here would keep their vertices too.
-    this.results = results.map((result) => ({ ...result, rings: null }));
+    this.results = [...results];
   }
 
   /** Whether satellite `i` has samples over the current window. */
