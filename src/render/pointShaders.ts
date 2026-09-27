@@ -47,7 +47,9 @@ export const POINT_ATTRIBUTE_LOCATIONS = {
 /**
  * In 3D the point is placed relative to the eye. In 2D and Columbus view it is
  * projected the way Cesium's `GeographicProjection` does, height dropped on the
- * map, into Cesium's `(height, easting, northing)` world coordinates.
+ * map, into Cesium's `(height, easting, northing)` world coordinates. During a
+ * morph it moves between that projection and 3D with `czm_morphTime`, as
+ * Cesium's own primitives do.
  *
  * Size and opacity follow the camera distance like `PointPrimitive`'s
  * `scaleByDistance` and `translucencyByDistance`, with 3 pixels of padding for
@@ -77,9 +79,14 @@ void main() {
     positionEC = czm_modelViewRelativeToEye * czm_translateRelativeToEye(positionHigh, positionLow);
     distanceSquared = dot(positionEC.xyz, positionEC.xyz);
   } else {
-    vec3 g = geodetic(positionHigh + positionLow);
+    vec3 position = positionHigh + positionLow;
+    vec3 g = geodetic(position);
     float height = czm_sceneMode == czm_sceneMode2D ? 0.0 : g.z;
-    positionEC = czm_modelView * vec4(height, g.x * WGS84_A, g.y * WGS84_A, 1.0);
+    vec4 projected = vec4(height, g.x * WGS84_A, g.y * WGS84_A, 1.0);
+    if (czm_sceneMode == czm_sceneModeMorphing) {
+      projected = czm_columbusViewMorph(projected, vec4(position, 1.0), czm_morphTime);
+    }
+    positionEC = czm_modelView * projected;
     distanceSquared = czm_sceneMode == czm_sceneMode2D
       ? czm_eyeHeight2D.y
       : dot(positionEC.xyz, positionEC.xyz);

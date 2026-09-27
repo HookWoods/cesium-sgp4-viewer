@@ -61,7 +61,7 @@ const toUniform = (scalar: NearFarScalar | undefined): Cartesian4 =>
  * Like the orbits, the points blend in the opaque pass, in the order the
  * primitives were added, so they land over the orbits. Picking goes through
  * Cesium's pick pass, with a pick colour per point: `scene.pick` answers with a
- * {@link PickedPoint}. Nothing is drawn during a morph.
+ * {@link PickedPoint}.
  */
 export class PointsPrimitive {
   /** Written by the caller with `writePoint` and `hidePoint`, uploaded after {@link markDirty}. */
@@ -104,7 +104,7 @@ export class PointsPrimitive {
   update(frameState: FrameState): void {
     const { mode, passes } = frameState;
     if (this.failed || !this.internals || this.colors.length === 0) return;
-    if ((!passes.render && !passes.pick) || mode === SceneMode.MORPHING) return;
+    if (!passes.render && !passes.pick) return;
 
     // Contained like the orbits: an exception here would stop the render loop.
     try {
@@ -218,8 +218,8 @@ export class PointsPrimitive {
       pass: internals.Pass.OPAQUE,
       pickId: 'v_pickColor',
       modelMatrix: Matrix4.IDENTITY,
-      // In 2D and Columbus view the shader projects the points itself: the
-      // bounding sphere, in Earth-fixed coordinates, would not hold there.
+      // Outside 3D the shader projects the points itself: the bounding
+      // sphere, in Earth-fixed coordinates, would not hold there.
       boundingVolume: is3D ? this.boundingSphere : undefined,
       cull: is3D,
     });
