@@ -34,6 +34,17 @@ describe('ShardSampler.sample', () => {
     expect(incremental.positions).toEqual(fresh.positions);
   });
 
+  it('gives the same samples after a move back in time or a jump', () => {
+    const moved = new ShardSampler(tles);
+    moved.sample(0, t0 + HOUR, t0 + 5 * HOUR);
+    const back = moved.sample(1, t0, t0 + 4 * HOUR);
+    expect(back.positions).toEqual(new ShardSampler(tles).sample(0, t0, t0 + 4 * HOUR).positions);
+
+    const jump = moved.sample(2, t0 + 48 * HOUR, t0 + 52 * HOUR);
+    const fresh = new ShardSampler(tles).sample(0, t0 + 48 * HOUR, t0 + 52 * HOUR);
+    expect(jump.positions).toEqual(fresh.positions);
+  });
+
   it('reports a decayed satellite with a count of 0', () => {
     const sampler = new ShardSampler([ISS.line1, ISS.line2]);
     const result = sampler.sample(0, Date.UTC(2076, 0, 1), Date.UTC(2076, 0, 1) + HOUR);

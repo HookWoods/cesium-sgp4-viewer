@@ -26,6 +26,7 @@ pnpm lint           # ESLint
 pnpm format         # Prettier (pnpm format:check in CI)
 pnpm typecheck      # library and examples
 pnpm test           # unit tests (Vitest)
+pnpm bench          # benchmarks of the hot paths, to compare before and after a change
 pnpm build          # ES module, IIFE bundle and type declarations in dist/
 pnpm check:package  # publint and arethetypeswrong on the packed tarball
 ```

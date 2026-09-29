@@ -1,6 +1,6 @@
 import {
   Cartesian2,
-  type Cartesian3,
+  Cartesian3,
   type Clock,
   Color,
   DistanceDisplayCondition,
@@ -104,7 +104,7 @@ const toColor = (color: ColorLike): Color =>
  */
 export class SatelliteLayer {
   readonly satellites: readonly Satellite[];
-  /** Settles with the first propagation. */
+  /** Settles with the first propagation, or rejects if the layer is destroyed before it. */
   readonly ready: Promise<void>;
 
   private readonly scene: Scene;
@@ -137,6 +137,8 @@ export class SatelliteLayer {
   private selectedIndex: number | undefined;
   private readonly hoverPosition = new Cartesian2();
   private hoverFrame = 0;
+  /** Whether the layer set the canvas cursor, so it only ever resets its own. */
+  private pointer = false;
   private destroyed = false;
 
   constructor(viewer: { scene: Scene; clock: Clock }, options: SatelliteLayerOptions) {
@@ -286,10 +288,14 @@ export class SatelliteLayer {
     return i === undefined ? undefined : this.satellites[i];
   }
 
-  /** Earth-fixed position of a satellite as currently drawn, if it is. */
-  positionOf(noradId: string): Cartesian3 | undefined {
+  /**
+   * Earth-fixed position of a satellite as currently drawn, if it is: a copy,
+   * in `result` when given.
+   */
+  positionOf(noradId: string, result?: Cartesian3): Cartesian3 | undefined {
     const i = this.indexById.get(noradId);
-    return i === undefined ? undefined : this.points.drawnPosition(i);
+    const position = i === undefined ? undefined : this.points.drawnPosition(i);
+    return position && Cartesian3.clone(position, result);
   }
 
   on<K extends keyof SatelliteLayerEvents>(
@@ -305,6 +311,9 @@ export class SatelliteLayer {
     this.destroyed = true;
     this.removePreUpdate();
     if (this.hoverFrame !== 0) cancelAnimationFrame(this.hoverFrame);
+    if (this.pointer) this.scene.canvas.style.cursor = '';
+    this.settleReady?.(new Error('the layer was destroyed before its first propagation'));
+    this.settleReady = undefined;
     this.handler.destroy();
     this.pool.destroy();
     this.points.destroy();
@@ -331,7 +340,11 @@ export class SatelliteLayer {
     this.hoverFrame = 0;
     if (this.destroyed) return;
     const i = this.points.pick(this.hoverPosition);
-    this.scene.canvas.style.cursor = i === undefined ? '' : 'pointer';
+    const pointer = i !== undefined;
+    if (pointer !== this.pointer) {
+      this.pointer = pointer;
+      this.scene.canvas.style.cursor = pointer ? 'pointer' : '';
+    }
     if (this.labelMode === 'hover') this.points.setHovered(i);
   };
 

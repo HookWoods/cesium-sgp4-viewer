@@ -139,8 +139,8 @@ Default colours are exported as `DEFAULT_REGIME_COLORS`.
 | `select(noradId \| null)`      | Select a satellite. A click on a point does the same.                                    |
 | `selected`                     | The selected `Satellite`, or `null`.                                                     |
 | `find(noradId)`                | Look a satellite up.                                                                     |
-| `positionOf(noradId)`          | Its Earth-fixed position as currently drawn, as a `Cartesian3`.                          |
-| `ready`                        | A promise settled by the first propagation.                                              |
+| `positionOf(noradId, result?)` | Its Earth-fixed position as currently drawn, as a new `Cartesian3` or in `result`.       |
+| `ready`                        | A promise settled by the first propagation. Rejects if `destroy()` comes first.          |
 | `on(event, listener)`          | Subscribe; returns the unsubscribe function.                                             |
 | `destroy()`                    | Remove everything from the scene and stop the workers.                                   |
 
