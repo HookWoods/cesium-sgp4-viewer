@@ -28,15 +28,3 @@ export const celestrakText = (...entries: { name: string; line1: string; line2: 
   entries
     .map(({ name, line1, line2 }) => `${name.padEnd(24)}\r\n${line1}\r\n${line2}\r\n`)
     .join('');
-
-/**
- * Line 1 and line 2 of `size` element sets, in turn, as a worker receives its
- * shard. Mostly LEO, like a real catalog.
- */
-export const shardLines = (size: number): string[] => {
-  const mix = [ISS, ISS, ISS, ISS, ISS, ISS, ISS, GPS, INTELSAT, POLAR];
-  return Array.from({ length: size }, (_, i) => mix[i % mix.length]!).flatMap((t) => [
-    t.line1,
-    t.line2,
-  ]);
-};
